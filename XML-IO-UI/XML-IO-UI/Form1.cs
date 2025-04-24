@@ -18,13 +18,15 @@ namespace XML_IO_UI
         public Form1()
         {
             InitializeComponent();
+            profileListBox.DrawMode = DrawMode.OwnerDrawFixed;
+            profileListBox.ItemHeight = 50;
             LoadProfiles();
             DisplayProfiles(allProfiles);
-            // Attach the TextChanged event to all filter text boxes
             nameTextBox.TextChanged += filterTextBox_TextChanged;
             ageTextBox.TextChanged += filterTextBox_TextChanged;
-            addressTextBox.TextChanged += filterTextBox_TextChanged;
             emailTextBox.TextChanged += filterTextBox_TextChanged;
+            addressTextBox.TextChanged += filterTextBox_TextChanged;
+            profileListBox.DrawItem += profileListBox_DrawItem;
         }
 
         private void LoadProfiles()
@@ -32,7 +34,7 @@ namespace XML_IO_UI
             XmlDocument doc = new XmlDocument();
             try
             {
-                doc.Load("./profiles.xml"); // Make sure profiles.xml is in the same directory as your executable
+                doc.Load("./profiles.xml");
             }
             catch (System.IO.FileNotFoundException)
             {
@@ -54,7 +56,7 @@ namespace XML_IO_UI
                 int age;
                 if (!int.TryParse(ageText, out age))
                 {
-                    age = 0; // Or set a default value, or handle the error as you see fit.
+                    age = 0;
                 }
                 string address = profileNode["address"] != null ? profileNode["address"].InnerText : "";
                 string email = profileNode["email"] != null ? profileNode["email"].InnerText : "";
@@ -68,7 +70,8 @@ namespace XML_IO_UI
             profileListBox.Items.Clear();
             foreach (Profile profile in profilesToDisplay)
             {
-                profileListBox.Items.Add(string.Format("Name: {0}, Age: {1}, Address: {2}, Email: {3}", profile.Name, profile.Age, profile.Address, profile.Email));
+                profileListBox.Items.Add(string.Format("Name: {0}\nAge: {1}\nAddress: {2}\nEmail: {3}",
+                                                     profile.Name, profile.Age, profile.Address, profile.Email));
             }
         }
 
@@ -82,10 +85,20 @@ namespace XML_IO_UI
             List<Profile> filteredProfiles = new List<Profile>();
             foreach (Profile profile in allProfiles)
             {
-                if (profile.Name.ToLower().Contains(nameFilter) &&
-                    (string.IsNullOrEmpty(ageFilterText) || profile.Age.ToString() == ageFilterText) &&
-                    profile.Address.ToLower().Contains(addressFilter) &&
-                    profile.Email.ToLower().Contains(emailFilter))
+                // Debugging output to the console:
+                System.Diagnostics.Debug.WriteLine("Profile:");
+                System.Diagnostics.Debug.WriteLine("  Name: " + profile.Name + ", Address: " + profile.Address + ", Email: " + profile.Email);
+                System.Diagnostics.Debug.WriteLine("Filters:");
+                System.Diagnostics.Debug.WriteLine("  NameFilter: " + nameFilter + ", AddressFilter: " + addressFilter + ", EmailFilter: " + emailFilter);
+
+                bool nameMatch = profile.Name.ToLower().Contains(nameFilter);
+                bool ageMatch = string.IsNullOrEmpty(ageFilterText) || profile.Age.ToString() == ageFilterText;
+                bool addressMatch = profile.Address.ToLower().Contains(addressFilter);
+                bool emailMatch = profile.Email.ToLower().Contains(emailFilter);
+
+                System.Diagnostics.Debug.WriteLine("  NameMatch: " + nameMatch + ", AgeMatch: " + ageMatch + ", AddressMatch: " + addressMatch + ", EmailMatch: " + emailMatch);
+
+                if (nameMatch && ageMatch && addressMatch && emailMatch)
                 {
                     filteredProfiles.Add(profile);
                 }
@@ -96,8 +109,6 @@ namespace XML_IO_UI
 
         private void label1_Click(object sender, EventArgs e)
         {
-            // This was an empty event handler in your original code.
-            // You can add any specific functionality here if needed.
         }
 
         public class Profile
@@ -106,6 +117,30 @@ namespace XML_IO_UI
             public int Age { get; set; }
             public string Address { get; set; }
             public string Email { get; set; }
+        }
+
+        private void profileListBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+            if (e.Index >= 0 && e.Index < profileListBox.Items.Count)
+            {
+                string itemText = profileListBox.Items[e.Index].ToString();
+                string[] lines = itemText.Split('\n');
+
+                using (SolidBrush textBrush = new SolidBrush(e.ForeColor))
+                {
+                    float y = e.Bounds.Y;
+                    foreach (string line in lines)
+                    {
+                        e.Graphics.DrawString(line, e.Font, textBrush, e.Bounds.X, y);
+                        y += e.Font.GetHeight();
+                    }
+                }
+            }
+            if ((e.State & DrawItemState.Focus) == DrawItemState.Focus)
+            {
+                e.DrawFocusRectangle();
+            }
         }
     }
 }

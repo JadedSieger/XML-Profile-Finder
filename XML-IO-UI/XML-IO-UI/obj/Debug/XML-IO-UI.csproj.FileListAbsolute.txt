@@ -6,3 +6,12 @@ c:\users\admin\documents\visual studio 2013\Projects\XML-IO-UI\XML-IO-UI\bin\Deb
 c:\users\admin\documents\visual studio 2013\Projects\XML-IO-UI\XML-IO-UI\bin\Debug\XML-IO-UI.pdb
 c:\users\admin\documents\visual studio 2013\Projects\XML-IO-UI\XML-IO-UI\obj\Debug\XML-IO-UI.exe
 c:\users\admin\documents\visual studio 2013\Projects\XML-IO-UI\XML-IO-UI\obj\Debug\XML-IO-UI.pdb
+E:\2E Ramirez\XML-IO-UI\XML-IO-UI\bin\Debug\XML-IO-UI.exe.config
+E:\2E Ramirez\XML-IO-UI\XML-IO-UI\obj\Debug\XML-IO-UI.exe
+E:\2E Ramirez\XML-IO-UI\XML-IO-UI\obj\Debug\XML-IO-UI.pdb
+E:\2E Ramirez\XML-IO-UI\XML-IO-UI\bin\Debug\XML-IO-UI.exe
+E:\2E Ramirez\XML-IO-UI\XML-IO-UI\bin\Debug\XML-IO-UI.pdb
+E:\2E Ramirez\XML-IO-UI\XML-IO-UI\obj\Debug\XML-IO-UI.csprojResolveAssemblyReference.cache
+E:\2E Ramirez\XML-IO-UI\XML-IO-UI\obj\Debug\XML_IO_UI.Form1.resources
+E:\2E Ramirez\XML-IO-UI\XML-IO-UI\obj\Debug\XML_IO_UI.Properties.Resources.resources
+E:\2E Ramirez\XML-IO-UI\XML-IO-UI\obj\Debug\XML-IO-UI.csproj.GenerateResource.Cache
