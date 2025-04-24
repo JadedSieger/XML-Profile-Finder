@@ -1,0 +1,111 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml;
+
+namespace XML_IO_UI
+{
+    public partial class Form1 : Form
+    {
+        private List<Profile> allProfiles = new List<Profile>();
+
+        public Form1()
+        {
+            InitializeComponent();
+            LoadProfiles();
+            DisplayProfiles(allProfiles);
+            // Attach the TextChanged event to all filter text boxes
+            nameTextBox.TextChanged += filterTextBox_TextChanged;
+            ageTextBox.TextChanged += filterTextBox_TextChanged;
+            addressTextBox.TextChanged += filterTextBox_TextChanged;
+            emailTextBox.TextChanged += filterTextBox_TextChanged;
+        }
+
+        private void LoadProfiles()
+        {
+            XmlDocument doc = new XmlDocument();
+            try
+            {
+                doc.Load("./profiles.xml"); // Make sure profiles.xml is in the same directory as your executable
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                MessageBox.Show("Error: profiles.xml not found!", "File Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (XmlException ex)
+            {
+                MessageBox.Show(string.Format("Error loading XML: {0}", ex.Message), "XML Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            XmlNodeList profileNodes = doc.GetElementsByTagName("profile");
+
+            foreach (XmlNode profileNode in profileNodes)
+            {
+                string name = profileNode["name"] != null ? profileNode["name"].InnerText : "";
+                string ageText = profileNode["age"] != null ? profileNode["age"].InnerText : "";
+                int age;
+                if (!int.TryParse(ageText, out age))
+                {
+                    age = 0; // Or set a default value, or handle the error as you see fit.
+                }
+                string address = profileNode["address"] != null ? profileNode["address"].InnerText : "";
+                string email = profileNode["email"] != null ? profileNode["email"].InnerText : "";
+
+                allProfiles.Add(new Profile { Name = name, Age = age, Address = address, Email = email });
+            }
+        }
+
+        private void DisplayProfiles(List<Profile> profilesToDisplay)
+        {
+            profileListBox.Items.Clear();
+            foreach (Profile profile in profilesToDisplay)
+            {
+                profileListBox.Items.Add(string.Format("Name: {0}, Age: {1}, Address: {2}, Email: {3}", profile.Name, profile.Age, profile.Address, profile.Email));
+            }
+        }
+
+        private void filterTextBox_TextChanged(object sender, EventArgs e)
+        {
+            string nameFilter = nameTextBox.Text.ToLower();
+            string ageFilterText = ageTextBox.Text;
+            string addressFilter = addressTextBox.Text.ToLower();
+            string emailFilter = emailTextBox.Text.ToLower();
+
+            List<Profile> filteredProfiles = new List<Profile>();
+            foreach (Profile profile in allProfiles)
+            {
+                if (profile.Name.ToLower().Contains(nameFilter) &&
+                    (string.IsNullOrEmpty(ageFilterText) || profile.Age.ToString() == ageFilterText) &&
+                    profile.Address.ToLower().Contains(addressFilter) &&
+                    profile.Email.ToLower().Contains(emailFilter))
+                {
+                    filteredProfiles.Add(profile);
+                }
+            }
+
+            DisplayProfiles(filteredProfiles);
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            // This was an empty event handler in your original code.
+            // You can add any specific functionality here if needed.
+        }
+
+        public class Profile
+        {
+            public string Name { get; set; }
+            public int Age { get; set; }
+            public string Address { get; set; }
+            public string Email { get; set; }
+        }
+    }
+}
